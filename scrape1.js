@@ -35,7 +35,7 @@ nightmare
   })
   .end()
   .then((result) =>{
-    let output = JSON.stringify(result, null, 2);
+    let output = JSON.stringify([...result, ...resultsArray], null, 2);
     fs.writeFile('./vocationalSchoolsData-scrape1.json', output, 'utf8', err => {
       if (err) {
         return console.log(err);
