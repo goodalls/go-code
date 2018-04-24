@@ -12,11 +12,12 @@ nightmare
     const segments = [
       ...document.querySelectorAll('.section-result-text-content')
     ];
-    const details = segments.map(segment => {
+    const details = segments.reduce((accumulator, segment) => {
+      let url = segment.querySelector('.section-result-title')//is this getting the url?????
       nightmare
-        .click('.section-result-title')
-        .wait(5000)
-        .evaluate(() => {
+        .click(url)
+        .wait('body')
+        .then(() => {
           let info = [...document.querySelectorAll('.widget-pane-link')];
           let address = info[0].innerText;
           let url = info[1].innerText;
@@ -29,15 +30,15 @@ nightmare
           let name = segment.querySelector('.section-result-title').innerText;
           let mapURL = segment.baseURI;
           let type = segment.querySelector('.section-result-details').innerText;
-          return { ...result, name, mapURL, type };
+          return accumulator.push({ ...result, name, mapURL, type });
         });
-    });
+    }, Promise.resolve([]));
     return details;
   })
   .end()
   .then(result => {
     let output = JSON.stringify(result, null, 2);
-    fs.writeFile('./vocationalSchoolsData.json', output, 'utf8', err => {
+    fs.writeFile('./vocationalSchoolsNewData.json', output, 'utf8', err => {
       if (err) {
         return console.log(err);
       }
